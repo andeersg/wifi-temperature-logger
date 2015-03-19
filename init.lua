@@ -11,6 +11,11 @@ ds18b20.setup(gpio0)
 wifi.setmode(wifi.STATION)
 wifi.sta.config("SSID","PASSWORD")
 
+--Test to reduce power consumption
+realtype = wifi.sleeptype(wifi.MODEM_SLEEP)
+
+print("Sleepmode "..realtype)
+
 function readTemp()
   local current_temp = ds18b20.read()
   current_temp = ds18b20.read()
@@ -32,9 +37,9 @@ function sendData(up_temp)
       -- Send value to server.
       conn=net.createConnection(net.TCP, 0) 
       conn:on("receive", function(conn, payload) print(payload) end)
-      conn:connect(80,'95.85.19.90') 
+      conn:connect(80,'11.22.33.44') 
       conn:send("GET /temptest.php?key="..key.."&field1="..up_temp.." HTTP/1.1\r\n") 
-      conn:send("Host: beta.andeers.com\r\n") 
+      conn:send("Host: example.com\r\n") 
       conn:send("Accept: */*\r\n") 
       conn:send("User-Agent: Mozilla/4.0 (compatible; esp8266 Lua; Windows NT 5.1)\r\n")
       conn:send("\r\n")
@@ -53,3 +58,4 @@ end
 readTemp()
 -- send data every X ms, 1800000 == 30 minutes
 tmr.alarm(0, 1800000, 1, function() readTemp() end )
+R
